@@ -7,8 +7,8 @@ class SessionsController < ApplicationController
   def create
     @user = User.find_by(email: params[:session][:email])
     if @user && @user.authenticate(params[:session][:password])
-      session[:id] = @user.id
       log_in @user
+      params[:session][:remember_me] == '1' ? remember(@user) : forget(@user)
       flash[:success] = "Dang nhap thanh cong!"
       redirect_to @user
     else
@@ -18,8 +18,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session[:user_id] = nil
-    flash[:success] = "Ban vua dang xuat thanh cong!"
+    logout if logged_in?
     redirect_to root_url
   end
 
