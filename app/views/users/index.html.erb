@@ -1,0 +1,10 @@
+<% provide :title, "Users" %>
+<h1>Users</h1>
+
+<% @users.each do |user| %>
+  <%= user.name %> <br>
+  <%= user.email %> <br>
+  <%= user.created_at %> <br>
+  <br>
+  <br>
+<% end %>
