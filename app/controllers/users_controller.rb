@@ -11,8 +11,10 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = "Vui long kiem tra email de kich hoat tai khoan!"
+      redirect_to root_url
+      # redirect_to @user
     else
       render 'new'
     end
@@ -24,6 +26,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page], per_page: 10)
   end
 
   def edit
@@ -50,12 +53,6 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
-  end
-
-  def authenticate
-    return if logged_in?
-    flash[:warning] = "Ban khong co quyen truy cap!"
-    redirect_to root_url
   end
 
   def correct_user
